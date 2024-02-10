@@ -1,19 +1,49 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleXmark, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import './Dropdown.css'
 
-const Dropdown = ({ options, onSelect }) => {
+const Dropdown = ({ original, position, options, onSelect }) => {
+    const [customText, setCustomText] = useState('')
+
+    console.log(position);
     return (
-      <div className="dropdown">
-        {options.map((option, index) => (
-          <div key={index} className="dropdown-option" onClick={() => onSelect(option)}>
-            {option}
+        <div 
+            className="dropdown-container"
+            // style={{
+            //     position: 'absolute',
+            //     top: `${position.x}px`,
+            //     left: `${position.y}px`
+            // }}
+        >
+          <div className="dropdown-options">
+            {options.map((option, index) => (
+              <div
+                key={index}
+                className="dropdown-option"
+                onClick={() => onSelect(option)}
+              >
+                {option}
+              </div>
+            ))}
+            <div className="dropdown-option"
+                onClick={() => onSelect(null)}>
+                <span>Not a proper noun</span>
+                <FontAwesomeIcon icon={faCircleXmark} style={{ float: 'right' }}></FontAwesomeIcon>
+            </div>
+            <div className="dropdown-option"
+                onClick={() => {if (customText.length > 0) {onSelect(customText)}}}>
+                <input placeholder="Custom..." className="dropdown-text-input" type='text' value={customText} onChange={(event) => setCustomText(event.target.value)}></input>
+                <FontAwesomeIcon icon={faCircleCheck} style={{ float: 'right' }}></FontAwesomeIcon>
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
     );
   };
 
-  const ColorText = ({ text, colorWords, onWordHover }) => {
+  const ColorText = ({ text, colorWords, onWordHover, onDropdownOptionSelect }) => {
     const [hoveredWord, setHoveredWord] = useState(null);
+    const [clickedWord, setClickedWord] = useState(null);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
     const [dropdownOptions, setDropdownOptions] = useState([]);
@@ -45,19 +75,23 @@ const Dropdown = ({ options, onSelect }) => {
       onWordHover && onWordHover(word);
     };
   
-    const handleWordClick = (word) => {
-      const clickedWord = colorWords.find(({ words }) => words === word);
+    const handleWordClick = (word, event) => {
+      let location = event.target.getBoundingClientRect();
+    //   console.log(location);
+      setClickedWord(colorWords.find(({ words }) => words === word));
       if (clickedWord) {
-        setDropdownOptions(['Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5']); // Example options
-        setDropdownPosition({ x: clickedWord.x, y: clickedWord.y + 20 }); // Adjust position
+        console.log(clickedWord);
+        setDropdownOptions(clickedWord.guesses); // Example options
+        setDropdownPosition({ x: location.x, y: location.y + 20 }); // Adjust position
         setDropdownVisible(true);
       }
     };
   
-    const handleDropdownSelect = (option) => {
-      console.log('Selected option:', option);
+    const handleDropdownSelect = (original, selection) => {
+      console.log('Selected option:', selection);
       // Perform action on dropdown option selection
       setDropdownVisible(false);
+      onDropdownOptionSelect(original, selection);
     };
   
     return (
@@ -72,13 +106,17 @@ const Dropdown = ({ options, onSelect }) => {
             }}
             onMouseEnter={() => handleWordHover(part.text)}
             onMouseLeave={() => handleWordHover(null)}
-            onClick={() => handleWordClick(part.text)}
+            onClick={(event) => handleWordClick(part.text, event)}
           >
             {part.text}
           </span>
         ))}
         {dropdownVisible && (
-          <Dropdown options={dropdownOptions} onSelect={handleDropdownSelect} />
+          <Dropdown 
+            original={clickedWord}
+            position={dropdownPosition}
+            options={dropdownOptions} 
+            onSelect={(selection) => handleDropdownSelect(clickedWord.words, selection)}/>
         )}
       </span>
     );

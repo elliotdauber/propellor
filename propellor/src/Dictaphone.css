@@ -1,0 +1,32 @@
+
+.search-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    margin-left: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 100px;
+    width: 100px;
+  }
+  
+  .search-button i {
+    font-size: 20px;
+  }
+
+@keyframes flash {
+    0% {
+        color: white;
+    }
+    50% {
+        color: red;
+    }
+    100% {
+        color: white;
+    }
+}
+
+.flashing {
+    animation: flash 1s infinite alternate;
+}
