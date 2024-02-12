@@ -107,6 +107,8 @@ const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSub
   
     return (
       <Stack width="80%" marginX="auto" spacing="4">
+
+        {/* The replacements menu that is used to edit the text string */}
         {replacementsVisible && (
             <ReplacementOptions 
               original={replacementsRevert}
@@ -114,10 +116,14 @@ const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSub
               options={replacementOptions} 
               onSelect={(selection) => handleReplacementSelect(selection)}/>
           )}
+
+        {/* The box that holds the text that is being "edited" */}
         <Box borderWidth="1px" borderRadius="20px" padding="20px" width="100%">
           <HStack justifyContent="space-between">
             {text === "" && <Text color="grey">Use the speech button to dictate</Text>}
             <span>
+              {/* Each item in the split text gets its own span, and they are
+              all laid out next to each other to look like one large text string */}
               {splitText(text, colorWords).map((part, index) => (
                 <span
                   key={index}
@@ -134,6 +140,8 @@ const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSub
                 </span>
               ))}
             </span>
+
+            {/* The "submit" button to send the current message to the chat interface */}
             <IconButton 
               icon={<ArrowUpIcon/>}
               isDisabled={text === ""}

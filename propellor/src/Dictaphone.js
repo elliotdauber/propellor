@@ -19,13 +19,13 @@ const Dictaphone = ({ onTranscriptionStart, onTranscriptUpdate }) => {
 
       const recognition = new window.webkitSpeechRecognition(); 
       recognition.lang = 'en-US'; 
-
+      
+      // set up callbacks for STT model
       recognition.onstart = () => {
         setIsTranscribing(true); 
       };
       
       recognition.onresult = (event) => {
-        console.log(event);
         const speechToText = event.results[0][0].transcript;
         onTranscriptUpdate(speechToText);
       };
@@ -34,6 +34,7 @@ const Dictaphone = ({ onTranscriptionStart, onTranscriptUpdate }) => {
         setIsTranscribing(false); 
       };
       
+      // start the listening/recognition
       recognition.start(); 
     };
   

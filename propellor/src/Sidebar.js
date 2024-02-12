@@ -21,9 +21,12 @@ const Sidebar = ({ isOpen, onClose, replacementHistory, onDeleteItem }) => {
           <DrawerHeader>Replacement History</DrawerHeader>
           <DrawerBody>
             <Stack spacing="2">
+              {/* A helpful message if there have been no replacements made */}
               {replacementHistory.length == 0 &&
                 <Text>No replacements yet</Text>
               }
+
+              {/* A list of the replacements that have been made*/}
               {replacementHistory.map((item, index) => (
                 <HStack 
                   key={index} 
@@ -34,19 +37,27 @@ const Sidebar = ({ isOpen, onClose, replacementHistory, onDeleteItem }) => {
                   justifyContent="space-between">
                     <HStack>
                       <Text>{item.original}</Text>
+
+                      {/* default: original -> new */}
                       {item.new != null && item.original != item.new &&
                         <HStack>
                           <ArrowForwardIcon size="xs"/>
                           <Text>{item.new}</Text>
                         </HStack>
                       }
+
+                      {/* a confirmation replacement, i.e. the STT model got it right */}
                       {item.new != null && item.original == item.new &&
                         <CheckIcon size="xs"/>
                       }
+
+                      {/* an anti-replacement, i.e. something identified as a proper noun that is not one */}
                       {item.new == null && 
                         <NotAllowedIcon size="xs" />
                       }
                     </HStack>
+
+                    {/* shows the delete icon for the item if it is hovered over */}
                     {hoveredItem !== null && hoveredItem === index
                       ? <IconButton
                           height="40px"
