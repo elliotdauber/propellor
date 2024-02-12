@@ -1,5 +1,8 @@
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react';
 
+/*
+ Overlay modal that explains what Propellor is and how to use it
+ */
 const InfoModal = ( {isOpen, onClose} ) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

@@ -1,5 +1,9 @@
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react';
 
+/*
+ Overlay modal expresses a connection error. Could easily be generalized
+ to any error, but there is only really one main error to be handled now
+ */
 const ErrorModal = ( {isOpen, onClose} ) => {
     return (
         <Modal isOpen={isOpen} onClose={onClose} >

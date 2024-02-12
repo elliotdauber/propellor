@@ -1,6 +1,11 @@
 import React  from 'react';
 import { Stack, HStack, Text } from '@chakra-ui/react';
 
+/*
+ Component that shows a vertical stack of the conversations with the 
+ chat interface. Shows user's chats on the right and Propellor's chats
+ on the left
+ */
 const Conversation = ({ chats }) => {
     return (
         <Stack spacing="4" height="100%" width="40%" marginX="auto" justifyContent="flex-end">
