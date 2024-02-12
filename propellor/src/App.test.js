@@ -1,8 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+// Some basic tests to make sure everything is being rendered correctly
+
+describe('App Component', () => {
+  test('renders Propellor title', () => {
+    render(<App />);
+    const titleElement = screen.getByText('Propellor');
+    expect(titleElement).toBeInTheDocument();
+  });
 });

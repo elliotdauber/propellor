@@ -3,7 +3,7 @@ import { Stack, HStack, Text } from '@chakra-ui/react';
 
 const Conversation = ({ chats }) => {
     return (
-        <Stack overflowY="auto" scrollBehavior="auto" spacing="4" height="100%" width="40%" marginX="auto" justifyContent="flex-end">
+        <Stack spacing="4" height="100%" width="40%" marginX="auto" justifyContent="flex-end">
             {chats.map((chat, index) => (
                 <HStack spacing="4" justifyContent={chat.isMine ? "flex-end" : "flex-start"} key={index}>
                     <Text

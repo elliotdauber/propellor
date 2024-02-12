@@ -1,0 +1,20 @@
+{
+    "location": "Palo Alto",
+    "contacts": [
+        {"name": "Elliot Dauber"},
+        {"name": "Michele Dauber", "relationship": "Mother"},
+        {"name": "Sahit Dendekuri", "relationship": "Roommate"}
+    ],
+    "favorite restaurants": [
+        "Terun",
+        "El Grullense",
+        "In N Out"
+    ],
+    "favorite cuisines": ["Japanese", "Italian", "Mexican"],
+    "occupation": "student",
+    "school": "Stanford",
+    "major": "Computer Science",
+    "hobbies": ["music", "travel", "cooking", "programming"],
+    "favorite sports teams": ["49ers", "Warriors"],
+    "recently visited countries": ["New Zealand", "Vietnam", "Japan", "Indonesia", "Thailand"]
+}

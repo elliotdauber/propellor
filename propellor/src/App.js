@@ -26,7 +26,7 @@ function App() {
     to pass to the TextEditor component
   */
   const correctProperNouns = (str) => {
-    fetch('/api/data?str=' + str + "&context=" + JSON.stringify(replacementHistory))
+    fetch('/api/replacements?str=' + str + "&context=" + JSON.stringify(replacementHistory))
       .then(response => response.json())
       .then(data => {
         console.log(data);
@@ -40,6 +40,8 @@ function App() {
           const original = item.original;
           let color = 'blue';
           let words = original;
+
+          // if there are any guesses, immediately replace with the best guess
           if (guesses.length > 0) {
             const best_guess = guesses[0];
             str = str.replace(original, best_guess);
@@ -60,6 +62,12 @@ function App() {
         console.error('Error fetching data:', error);
       });
   };
+
+  /*
+   Makes the correctProperNouns function available globally 
+   for testing through the console
+  */
+  window.correctProperNouns = correctProperNouns;
 
   /*
     Submits a message to the backend to enable the chat/messaging
@@ -117,6 +125,7 @@ function App() {
           left="20px"
           zIndex="1"
           icon={<ArrowRightIcon/>}
+          id=""
           isDisabled={sidebarOpen}
           _hover={{ backgroundColor: 'blue.200' }}
           _active={{ backgroundColor: 'blue.700' }}
