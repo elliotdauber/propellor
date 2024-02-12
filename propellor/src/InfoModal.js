@@ -21,7 +21,7 @@ const InfoModal = ( {isOpen, onClose} ) => {
             </p>
             <br />
             <p>
-                When you fix proper nouns, Propellor learns! To see how Propellor is learning, click the arrow on the upper-right
+                When you fix proper nouns, Propellor learns! To see how Propellor is learning, click the arrow on the upper-left
                 hand side of the screen, and you will be able to see your replacement history. If you made a mistake, just hover
                 over a replacement and click the x icon that appears.
             </p>

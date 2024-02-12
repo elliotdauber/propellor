@@ -21,6 +21,9 @@ const Sidebar = ({ isOpen, onClose, replacementHistory, onDeleteItem }) => {
           <DrawerHeader>Replacement History</DrawerHeader>
           <DrawerBody>
             <Stack spacing="2">
+              {replacementHistory.length == 0 &&
+                <Text>No replacements yet</Text>
+              }
               {replacementHistory.map((item, index) => (
                 <HStack 
                   key={index} 
