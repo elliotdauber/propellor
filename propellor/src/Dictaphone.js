@@ -3,36 +3,44 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import './Dictaphone.css'
 
-const Dictaphone = ({ onTranscriptUpdate }) => {
+/*
+ The component of Propellor that displays the microphone icon and
+ carries out the speech-to-text transcription. Written in its own
+ module to make it easy to switch out STT models
+
+ Currently uses the default browser model
+*/
+const Dictaphone = ({ onTranscriptionStart, onTranscriptUpdate }) => {
     const [isTranscribing, setIsTranscribing] = useState(false);
     
     const startRecognition = () => {
 
+      onTranscriptionStart();
 
-      const recognition = new window.webkitSpeechRecognition(); // Create a new instance of SpeechRecognition
-      recognition.lang = 'en-US'; // Set the language for speech recognition
+      const recognition = new window.webkitSpeechRecognition(); 
+      recognition.lang = 'en-US'; 
 
       recognition.onstart = () => {
-        setIsTranscribing(true); // Set state to indicate transcription is ongoing
+        setIsTranscribing(true); 
       };
       
       recognition.onresult = (event) => {
         console.log(event);
         const speechToText = event.results[0][0].transcript;
         onTranscriptUpdate(speechToText);
-
-        // setTranscript(speechToText);
       };
 
       recognition.onend = () => {
-        setIsTranscribing(false); // Set state to indicate transcription is complete
+        setIsTranscribing(false); 
       };
       
-      recognition.start(); // Start speech recognition
+      recognition.start(); 
     };
   
     return (
-    <button className={`search-button ${isTranscribing ? 'flashing' : ''}`} onClick={startRecognition}>
+    <button 
+      className={`search-button ${isTranscribing ? 'flashing' : ''}`} 
+      onClick={startRecognition}>
         <FontAwesomeIcon icon={faMicrophone} size="4x" />
     </button>
     );

@@ -1,0 +1,74 @@
+import React, {useState} from 'react';
+import { HStack, IconButton, Text, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, Stack, useColorModeValue } from '@chakra-ui/react';
+import { ArrowForwardIcon, CheckIcon, DeleteIcon, NotAllowedIcon } from '@chakra-ui/icons';
+
+/**
+ * Component for the slidebar on the left-hand-side of the Propellor screen.
+ * Shows the replacement history for a given session. Allows for deleting
+ * of any item in the replacement history
+ * Can be opened and closed
+ */
+const Sidebar = ({ isOpen, onClose, replacementHistory, onDeleteItem }) => {
+  const sidebarBgColor = useColorModeValue('gray.200', 'gray.700');
+
+  const [hoveredItem, setHoveredItem] = useState(null);
+
+  return (
+    <Drawer isOpen={isOpen} onClose={onClose} placement="left">
+      <DrawerOverlay>
+        <DrawerContent backgroundColor={sidebarBgColor} width={isOpen ? "250px" : "50px"} transition="width 0.5s ease">
+          <DrawerCloseButton />
+          <DrawerHeader>Replacement History</DrawerHeader>
+          <DrawerBody>
+            <Stack spacing="2">
+              {replacementHistory.map((item, index) => (
+                <HStack 
+                  key={index} 
+                  width="100%" 
+                  height="40px" 
+                  onMouseEnter={() => setHoveredItem(index)} 
+                  onMouseLeave={() => setHoveredItem(null)}
+                  justifyContent="space-between">
+                    <HStack>
+                      <Text>{item.original}</Text>
+                      {item.new != null && item.original != item.new &&
+                        <HStack>
+                          <ArrowForwardIcon size="xs"/>
+                          <Text>{item.new}</Text>
+                        </HStack>
+                      }
+                      {item.new != null && item.original == item.new &&
+                        <CheckIcon size="xs"/>
+                      }
+                      {item.new == null && 
+                        <NotAllowedIcon size="xs" />
+                      }
+                    </HStack>
+                    {hoveredItem !== null && hoveredItem === index
+                      ? <IconButton
+                          height="40px"
+                          marginRight="0px"
+                          icon={<DeleteIcon/>}
+                          onClick={() => onDeleteItem(index)}
+                          bg={sidebarBgColor}
+                          _hover={{ backgroundColor: 'lightgrey' }}
+                          _active={{ backgroundColor: 'lightgrey' }}
+                        /> 
+                      : null
+                    }
+                  </HStack>
+              ))}
+            </Stack>
+          </DrawerBody>
+        </DrawerContent>
+      </DrawerOverlay>
+    </Drawer>
+  );
+}
+
+export default Sidebar;
+
+// <FontAwesomeIcon 
+                      //     style={{ float: 'right' }} 
+                      //     icon={faCircleXmark}>
+                      //   </FontAwesomeIcon> : null}
