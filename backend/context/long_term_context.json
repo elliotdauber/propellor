@@ -3,7 +3,7 @@
     "contacts": [
         {"name": "Elliot Dauber"},
         {"name": "Michele Dauber", "relationship": "Mother"},
-        {"name": "Sahit Dendekuri", "relationship": "Roommate"}
+        {"name": "Sahit", "relationship": "Roommate"}
     ],
     "favorite restaurants": [
         "Terun",
