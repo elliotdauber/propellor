@@ -4,7 +4,8 @@ import Dictaphone from './Dictaphone';
 import Sidebar from './Sidebar';
 import Conversation from './Conversation';
 import InfoModal from './InfoModal';
-import { ChakraProvider, IconButton, Text, HStack } from '@chakra-ui/react';
+import ErrorModal from './ErrorModal';
+import { ChakraProvider, IconButton, Text, HStack, } from '@chakra-ui/react';
 import { ArrowRightIcon, QuestionIcon } from '@chakra-ui/icons';
 import './App.css'; 
 
@@ -19,6 +20,7 @@ function App() {
   const [replacementHistory, setReplacementHistory] = useState([]);
   const [transcribing, setTranscribing] = useState(false);
   const [chats, setChats] = useState([])
+  const [fetchError, setFetchError] = useState(false);
 
   /*
     Queries the backend for the corrections/possible replacements
@@ -46,7 +48,7 @@ function App() {
             const best_guess = guesses[0];
             str = str.replace(original, best_guess);
             guesses.shift() // remove best_guess
-            guesses = guesses.filter(guess => guess != original); // remove original
+            guesses = guesses.filter(guess => guess !== original); // remove original
             color = 'green';
             words = best_guess;
           }
@@ -60,6 +62,7 @@ function App() {
       })
       .catch(error => {
         console.error('Error fetching data:', error);
+        setFetchError(true);
       });
   };
 
@@ -147,6 +150,9 @@ function App() {
         {/* Sidebar and info modal (hidden initially) */}
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} replacementHistory={replacementHistory} onDeleteItem={(index) => setReplacementHistory(replacementHistory.filter((_, idx) => idx !== index))} />
         <InfoModal isOpen={infoModalOpen} onClose={() => setInfoModalOpen(false)} />
+        
+        {/* Error modal */}
+        <ErrorModal isOpen={fetchError} onClose={() => setFetchError(false)} />
 
         {/* The main screen of the Propellor app */}
         <div className="chat-container">
