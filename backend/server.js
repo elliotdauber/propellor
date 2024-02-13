@@ -1,7 +1,13 @@
 const express = require('express');
-const { gptReplacementRequest, gptMessageRequest } = require('./gptAccess');
+const { GPTAccess } = require('./gptAccess');
 
 const app = express();
+
+/*
+    Accessor for the LLM being used. Swap this out
+    to change LLMs!
+ */
+const llmAccess = new GPTAccess();
 
 /*
  API endpoint for querying the replacement system.
@@ -11,8 +17,11 @@ const app = express();
 app.get('/api/replacements', (req, res) => {
     str = req.query.str
     context = JSON.parse(req.query.context);
-    response = gptReplacementRequest(str, context)
-        .then(response => res.json(response.message.content));
+    response = llmAccess.replacementRequest(str, context)
+        .then(response => {
+            console.log("sending res", response);
+            res.json(response.message.content)
+        });
 });
 
 /*
@@ -22,7 +31,7 @@ app.get('/api/replacements', (req, res) => {
 */
 app.get('/api/message', (req, res) => {
     message = req.query.message;
-    response = gptMessageRequest(message)
+    response = llmAccess.messageRequest(message)
         .then(response => {
             console.log(response)
             res.json(response.message.content)

@@ -5,6 +5,8 @@ import Sidebar from './Sidebar';
 import Conversation from './Conversation';
 import InfoModal from './InfoModal';
 import ErrorModal from './ErrorModal';
+import Client from "./client";
+import { getKeyWithLargestValue, getReplacementFrequency } from "./utils"
 import { ChakraProvider, IconButton, Text, HStack, } from '@chakra-ui/react';
 import { ArrowRightIcon, QuestionIcon } from '@chakra-ui/icons';
 import './App.css'; 
@@ -13,57 +15,87 @@ function App() {
   const sampleChats = [{isMine: true, text: "hey there whats up Elliot"}, {isMine: false, text: "just chillin"}]
   const sampleRH = [{original: 'Elliot', new: 'Elliottt'}]
 
+  // str containing the current text that is being dictated/edited
   const [messageText, setMessageText] = useState('');
+
+  // list of {words: str, original: str, color: str, guesses: [str]} representing the
+  // coloring data and guesses for a word/phrase that might be a proper noun
   const [coloring, setColoring] = useState([]);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
+
+  // list of {original: str, new: str} representing a user's previous replacements
   const [replacementHistory, setReplacementHistory] = useState([]);
   const [transcribing, setTranscribing] = useState(false);
+
+  // list of {isMine: boolean, text: str} representing chat history for current session
   const [chats, setChats] = useState([])
   const [fetchError, setFetchError] = useState(false);
+
+  /*
+   Client that talks to the backend
+  */
+  const client = new Client();
 
   /*
     Queries the backend for the corrections/possible replacements
     for proper nouns in the given string, then parses the response
     to pass to the TextEditor component
   */
-  const correctProperNouns = (str) => {
-    fetch('/api/replacements?str=' + str + "&context=" + JSON.stringify(replacementHistory))
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        let json = JSON.parse(data)
-  
-        let coloring = []
-
-        json.forEach((item) => {
-          console.log(item);
-          let guesses = item.guesses;
-          const original = item.original;
-          let color = 'blue';
-          let words = original;
-
-          // if there are any guesses, immediately replace with the best guess
-          if (guesses.length > 0) {
-            const best_guess = guesses[0];
-            str = str.replace(original, best_guess);
-            guesses.shift() // remove best_guess
-            guesses = guesses.filter(guess => guess !== original); // remove original
-            color = 'green';
-            words = best_guess;
-          }
-          // console.log("words", words)
-          // console.log("original", original);
-          coloring.push({words, original, color, guesses})
-        })
-
-        setColoring(coloring);
-        setMessageText(str);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
+  const correctProperNouns = async (str) => {
+    // fetch('/api/replacements?str=' + str + "&context=" + JSON.stringify(replacementHistory))
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     console.log(data);
+      const response = await client.sendReplacementRequest(str, replacementHistory);
+      console.log("RES", response);
+      if (response == null) {
         setFetchError(true);
-      });
+        return;
+      }
+
+      let coloring = []
+      
+      // goes through each set of possible replacements
+      // in the response and builds the coloring for it
+      response.forEach((item) => {
+        console.log(item);
+        let guesses = item.guesses;
+        const original = item.original;
+        
+        // manually find best replacement from replacement_history
+        let replacement_frequency = getReplacementFrequency(item.original, replacementHistory);
+        let best_guess_manual = getKeyWithLargestValue(replacement_frequency);
+        
+        // put the manual best guess at the front of the guesses list
+        if (best_guess_manual !== null) {
+          if (guesses.includes(best_guess_manual)) {
+            guesses.splice(guesses.find((item) => item === best_guess_manual));
+          }
+          guesses.unshift(best_guess_manual);
+        }
+
+        // defaults
+        let color = 'blue';
+        let words = original;
+
+        // if there are any guesses, immediately replace with the best guess
+        if (guesses.length > 0) {
+          const best_guess = guesses[0];
+          str = str.replace(original, best_guess);
+          guesses.shift() // remove best_guess
+          guesses = guesses.filter(guess => guess !== original); // remove original
+          color = 'green';
+          words = best_guess;
+        }
+        // console.log("words", words)
+        // console.log("original", original);
+        coloring.push({words, original, color, guesses})
+      })
+
+      setColoring(coloring);
+      setMessageText(str);
   };
 
   /*
@@ -76,19 +108,18 @@ function App() {
     Submits a message to the backend to enable the chat/messaging
     portion of Propellor. Parses the response to show to the user.
    */
-  const submitMessage = (message) => {
+  const submitMessage = async (message) => {
     setMessageText('')
     let newChats = [...chats, {isMine: true, text: message}]
     setChats(newChats)
-    fetch('/api/message?message=' + message)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        setChats([...newChats, {isMine: false, text: data}])
-      })
-      .catch(error => {
-        console.error('Error submitting message:', error);
-      });
+    const response = await client.sendMessageRequest(message);
+    if (response == null) {
+      setFetchError(true);
+      return;
+    }
+
+    console.log("received message response", response);
+    setChats([...newChats, {isMine: false, text: response}])
   }
 
   /*
@@ -157,7 +188,7 @@ function App() {
         {/* The main screen of the Propellor app */}
         <div className="chat-container">
           <Text fontSize="4xl" fontWeight="bold">
-            <h1>Propellor</h1>
+            Propellor
           </Text>
 
           {/* Shows conversation history for a given session */}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark, faCircleCheck, faBackward} from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark, faCircleCheck, faBackward, faAngleUp} from '@fortawesome/free-solid-svg-icons';
 import { Button, HStack, Input } from '@chakra-ui/react';
 
 /**
@@ -11,10 +11,11 @@ const ReplacementOptions = ({ original, current, options, onSelect }) => {
     const [customText, setCustomText] = useState('')
 
     // whether or not to show the "revert" option
-    const revert = !options.includes(original) && current != original;
+    const revert = !options.includes(original) && current !== original;
 
     return (
         <HStack spacing="4" marginX="auto">
+            {/* List of generated replacement options */}
             {options.map((option, index) => (
                 <Button
                 borderRadius={10}
@@ -25,6 +26,21 @@ const ReplacementOptions = ({ original, current, options, onSelect }) => {
                 {option}
                 </Button>
             ))}
+
+            {/* "This is correct" replacement */}
+            {original !== current &&
+                <Button
+                    variant="outline"
+                    onClick={() => onSelect(current)}>
+                    <HStack spacing="2">
+                        <span>"{current}" is correct</span>
+                        <FontAwesomeIcon icon={faCircleCheck} />
+                    </HStack>
+                </Button>
+            }
+            
+
+            {/* "Revert to original" replacement */}
             {revert &&
             <Button
               variant="outline"
@@ -33,8 +49,10 @@ const ReplacementOptions = ({ original, current, options, onSelect }) => {
                   <span>revert to "{original}"</span>
                   <FontAwesomeIcon icon={faBackward} />
                 </HStack>
-              </Button>
+            </Button>
             }
+
+            {/* "Not a proper noun" replacement */}
             <Button
                 variant="outline"
                 onClick={() => onSelect(null)}>
@@ -43,9 +61,10 @@ const ReplacementOptions = ({ original, current, options, onSelect }) => {
                   <FontAwesomeIcon icon={faCircleXmark} />
                 </HStack>
             </Button>
+
+            {/* Custom replacement */}
             <Button 
-                variant="outline"
-                onClick={() => {if (customText.length > 0) {onSelect(customText)}}}>
+                variant="outline">
                 <HStack spacing="2">
                   <Input 
                     variant="unstyled"
@@ -53,7 +72,12 @@ const ReplacementOptions = ({ original, current, options, onSelect }) => {
                     placeholder="Custom..." 
                     value={customText} 
                     onChange={(event) => setCustomText(event.target.value)} />
-                  {customText.length > 0 && <FontAwesomeIcon icon={faCircleCheck} /> }
+                  {customText.length > 0 && 
+                    <FontAwesomeIcon 
+                        icon={faAngleUp} 
+                        onClick={() => {if (customText.length > 0) {onSelect(customText)}}}
+                    />
+                    }
                 </HStack>
             </Button>
       </HStack>
