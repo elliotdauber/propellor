@@ -20,7 +20,8 @@ The backend of Propellor is written in Javascript using express.js for local web
 
 The replacements api is where the magic of Propellor happens. The API takes two inputs: a string to do replacements on, and a context object (replacements here refers to finding substrings of the string that may be proper nouns, and generating guesses as to what the proper noun could be). The replacements api calls into a finetuned gpt-3.5-turbo model from OpenAI that returns structured data corresponding to possible proper noun replacements. Here is the prompt that is used:
 
-```
+<br />
+<em>
 "You are a helpful assistant whose job it is to take in text and find all of the words and phrases that could be proper nouns. This includes words and phrases that don’t look like proper nouns in the input text, but that you think based on context could be proper nouns that were transcribed incorrectly from the voice-to-text transcription. 
 
 If there are grammatical errors in the text, it is very likely that they were supposed to be proper nouns, so you must flag them as such and take your best guess at the intended proper noun. These will be text transcripts from a speech-to-text model, so they might not be perfect. You need to determine what is intended to be a proper noun. In some cases, there may even be multiple words together in the source text that should form a proper noun. 
@@ -30,7 +31,8 @@ You should use the context of the surrounding words, as well as the context obje
 You will also have access to LongTermContext, which is a json-encoded object of long-term contextual information about the user that might be helpful in understanding what proper nouns they might be referring to. However, do not use the long-term context replacements unless the words are phonetically similar. 
 
 You will return as output a JSON list of the words and phrases in the original text that you think are supposed to be proper nouns, and for each one, give your best guesses at possible proper nouns. The first guess should be the most likely one to be correct."
-```
+</em>
+<br />
 
 The model is fine-tuned using this prompt on a set of examples that can be found in fine-tune.jsonl. I iterated on this prompt a lot in order to get the model to return the data in the correct format and to understand the complexity of the problem it's solving, with both short-term and long-term context.
 
