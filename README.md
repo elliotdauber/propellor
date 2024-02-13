@@ -32,6 +32,7 @@ You will also have access to LongTermContext, which is a json-encoded object of 
 
 You will return as output a JSON list of the words and phrases in the original text that you think are supposed to be proper nouns, and for each one, give your best guesses at possible proper nouns. The first guess should be the most likely one to be correct."
 </em>
+
 <br />
 
 The model is fine-tuned using this prompt on a set of examples that can be found in fine-tune.jsonl. I iterated on this prompt a lot in order to get the model to return the data in the correct format and to understand the complexity of the problem it's solving, with both short-term and long-term context.
