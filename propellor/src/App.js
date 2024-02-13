@@ -138,12 +138,18 @@ function App() {
   }
 
   /*
-    When there is an update in the transcription, set the message text
-    and query the backend for the corrected proper nouns
+    When there is an update in the transcription, update the text in the editor
    */
   const onTranscriptUpdate = (transcript) => {
-    setTranscribing(false); 
     setMessageText(transcript); 
+  }
+
+  /*
+    When the transcription finishes, correct the proper nouns in the full transcript
+   */
+  const onTranscriptFinish = (transcript) => {
+    setTranscribing(false);
+    setMessageText(transcript);
     correctProperNouns(transcript);
   }
 
@@ -195,7 +201,7 @@ function App() {
           <Conversation chats={chats}/>
 
           {/* Shows the TextEditor and the microphone icon used for toggling dictation*/}
-          <HStack spacing="5" width="80%" marginTop="40px">
+          <HStack spacing="5" width="80%" marginTop="40px" alignItems="flex-end">
             <TextEditor
               text={messageText}
               colorWords={coloring}
@@ -203,7 +209,10 @@ function App() {
               transcribing={transcribing}
               onSubmitClicked={(message) => submitMessage(message)}
             />
-            <Dictaphone className="dictaphone" onTranscriptionStart={() => setTranscribing(true)} onTranscriptUpdate={onTranscriptUpdate}/>
+            <Dictaphone className="dictaphone" 
+              onTranscriptionStart={() => setTranscribing(true)} 
+              onTranscriptionEnd={onTranscriptFinish}
+              onTranscriptUpdate={onTranscriptUpdate}/>
           </HStack>
         </div>
       </div>

@@ -15,7 +15,7 @@ const ReplacementOptions = ({ original, current, options, onSelect }) => {
 
     return (
         <Flex justifyContent="center">
-            <Wrap spacing="4" marginX="auto">
+            <Wrap spacing="4" marginX="auto" justify="center">
 
                 {/* List of generated replacement options */}
                 {options.map((option, index) => (

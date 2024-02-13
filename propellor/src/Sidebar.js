@@ -23,7 +23,7 @@ const Sidebar = ({ isOpen, onClose, replacementHistory, onDeleteItem }) => {
             <Stack spacing="2">
               {/* A helpful message if there have been no replacements made */}
               {replacementHistory.length == 0 &&
-                <Text>No replacements yet</Text>
+                <Text>No replacements yet. Start using Propellor to generate and verify proper noun replacements!</Text>
               }
 
               {/* A list of the replacements that have been made*/}

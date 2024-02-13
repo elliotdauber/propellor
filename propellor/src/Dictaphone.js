@@ -10,28 +10,63 @@ import './Dictaphone.css'
 
  Currently uses the default browser model
 */
-const Dictaphone = ({ onTranscriptionStart, onTranscriptUpdate }) => {
+const Dictaphone = ({ onTranscriptionStart, onTranscriptionEnd, onTranscriptUpdate }) => {
     const [isTranscribing, setIsTranscribing] = useState(false);
+
+    let recognition = null;
+    let timeoutId = null;
+    let transcription = "";
+
+    const toggleRecognition = () => {
+      if (isTranscribing) {
+        stopRecognition();
+      } else {
+        startRecognition();
+      }
+    }
+
+    const stopRecognition = () => {
+      if (recognition === null) return;
+      setIsTranscribing(false);
+      recognition.stop();
+    }
     
     const startRecognition = () => {
-
+      if (recognition !== null) return;
+      transcription = "";
+      setIsTranscribing(true);
       onTranscriptionStart();
 
-      const recognition = new window.webkitSpeechRecognition(); 
+      recognition = new window.webkitSpeechRecognition(); 
       recognition.lang = 'en-US'; 
+      recognition.interimResults = true; // Enable interim results
       
       // set up callbacks for STT model
       recognition.onstart = () => {
-        setIsTranscribing(true); 
+        // setIsTranscribing(true); 
       };
       
       recognition.onresult = (event) => {
         const speechToText = event.results[0][0].transcript;
+        transcription = speechToText;
         onTranscriptUpdate(speechToText);
       };
 
       recognition.onend = () => {
-        setIsTranscribing(false); 
+        onTranscriptionEnd(transcription);
+        setIsTranscribing(false);
+      };
+
+      recognition.onaudiostart = () => {
+          if (timeoutId !== null) {
+            clearTimeout(timeoutId); // Clear any existing timeout
+          }
+      };
+
+      recognition.onaudioend = () => {
+          timeoutId = setTimeout(() => {
+              recognition.stop(); // Stop recognition after a period of silence
+          }, 5000);
       };
       
       // start the listening/recognition
@@ -41,7 +76,7 @@ const Dictaphone = ({ onTranscriptionStart, onTranscriptUpdate }) => {
     return (
     <button 
       className={`search-button ${isTranscribing ? 'flashing' : ''}`} 
-      onClick={startRecognition}>
+      onClick={toggleRecognition}>
         <FontAwesomeIcon icon={faMicrophone} size="4x" />
     </button>
     );

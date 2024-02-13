@@ -9,7 +9,7 @@ import { ArrowUpIcon } from '@chakra-ui/icons';
  * to choose replacements for words that are highlighted
  */
 const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSubmitClicked }) => {
-    console.log("RESET, TSB", transcribing)
+    // console.log("RESET, TSB", transcribing)
 
     const [hoveredWord, setHoveredWord] = useState(null);
     const [clickedWord, setClickedWord] = useState(null);
