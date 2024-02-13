@@ -25,12 +25,19 @@ const Dictaphone = ({ onTranscriptionStart, onTranscriptionEnd, onTranscriptUpda
       }
     }
 
+    /*
+      Registers callbacks for the recognition and starts it
+    */
     const stopRecognition = () => {
       if (recognition === null) return;
       setIsTranscribing(false);
       recognition.stop();
+      recognition = null;
     }
     
+    /*
+      Registers callbacks for the recognition and starts it
+    */
     const startRecognition = () => {
       if (recognition !== null) return;
       transcription = "";
@@ -39,11 +46,11 @@ const Dictaphone = ({ onTranscriptionStart, onTranscriptionEnd, onTranscriptUpda
 
       recognition = new window.webkitSpeechRecognition(); 
       recognition.lang = 'en-US'; 
-      recognition.interimResults = true; // Enable interim results
+      recognition.interimResults = true; 
       
       // set up callbacks for STT model
       recognition.onstart = () => {
-        // setIsTranscribing(true); 
+        console.log("transcription started");
       };
       
       recognition.onresult = (event) => {
@@ -66,7 +73,7 @@ const Dictaphone = ({ onTranscriptionStart, onTranscriptionEnd, onTranscriptUpda
       recognition.onaudioend = () => {
           timeoutId = setTimeout(() => {
               recognition.stop(); // Stop recognition after a period of silence
-          }, 5000);
+          }, 15000);
       };
       
       // start the listening/recognition

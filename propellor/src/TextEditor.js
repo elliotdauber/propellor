@@ -1,21 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReplacementOptions from './ReplacementOptions';
 import { Box, HStack, Stack, IconButton, Text } from '@chakra-ui/react';
-import { ArrowUpIcon } from '@chakra-ui/icons';
+import { ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
 
 /**
  * Component for the "TextEditor" at the bottom of the Propellor screen
  * This is not a normal text editor in that the only way to edit it is
  * to choose replacements for words that are highlighted
  */
-const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSubmitClicked }) => {
-    // console.log("RESET, TSB", transcribing)
-
+const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSubmitClicked, onClearClicked }) => {
     const [hoveredWord, setHoveredWord] = useState(null);
     const [clickedWord, setClickedWord] = useState(null);
-    const [replacementsVisible, setReplacementsVisible] = useState(clickedWord && !transcribing);
+    const [replacementsVisible, setReplacementsVisible] = useState(false);
     const [replacementOptions, setReplacementOptions] = useState([]);
     const [replacementsRevert, setReplacementsRevert] = useState(null);
+
+    useEffect(() => {
+      if (transcribing) {
+        setClickedWord(null);
+        setHoveredWord(null);
+        setReplacementsVisible(false);
+      }
+    }, [transcribing]);
   
      /*
       Given a string of text and data about which words in that text
@@ -90,6 +96,11 @@ const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSub
       onSubmitClicked(text)
     }
 
+    const handleClearClicked = () => {
+      setReplacementsVisible(false);
+      onClearClicked();
+    }
+
     /*
       For a word that is colored, returns its font weight
       A word will be bold if it is currently hovered over
@@ -109,7 +120,7 @@ const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSub
       <Stack width="80%" marginX="auto" spacing="4">
 
         {/* The replacements menu that is used to edit the text string */}
-        {replacementsVisible && (
+        {replacementsVisible && !transcribing && (
             <ReplacementOptions 
               original={replacementsRevert}
               current={clickedWord.text}
@@ -120,7 +131,7 @@ const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSub
         {/* The box that holds the text that is being "edited" */}
         <Box borderWidth="1px" borderRadius="20px" padding="20px" width="100%">
           <HStack justifyContent="space-between">
-            {text === "" && <Text color="grey">Use the speech button to dictate</Text>}
+            {text === "" && <Text color="grey" cursor="default">Use the speech button to dictate</Text>}
             <span>
               {/* Each item in the split text gets its own span, and they are
               all laid out next to each other to look like one large text string */}
@@ -141,13 +152,22 @@ const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSub
               ))}
             </span>
 
-            {/* The "submit" button to send the current message to the chat interface */}
-            <IconButton 
-              icon={<ArrowUpIcon/>}
-              isDisabled={text === ""}
-              onClick={() => handleSubmitClicked(text)}
-            />
+            <HStack spacing="2">
+              {/* The "clear" button clear the current transcription */}
+              <IconButton 
+                icon={<DeleteIcon/>}
+                isDisabled={text === ""}
+                onClick={handleClearClicked}
+              />
+
+              {/* The "submit" button to send the current message to the chat interface */}
+              <IconButton 
+                icon={<ArrowUpIcon/>}
+                isDisabled={text === ""}
+                onClick={() => handleSubmitClicked(text)}
+              />
             </HStack>
+          </HStack>
         </Box>
       </Stack>
     );

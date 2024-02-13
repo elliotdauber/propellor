@@ -12,8 +12,8 @@ import { ArrowRightIcon, QuestionIcon } from '@chakra-ui/icons';
 import './App.css'; 
 
 function App() {
-  const sampleChats = [{isMine: true, text: "hey there whats up Elliot"}, {isMine: false, text: "just chillin"}]
-  const sampleRH = [{original: 'Elliot', new: 'Elliottt'}]
+  // const sampleChats = [{isMine: true, text: "hey there whats up Elliot"}, {isMine: false, text: "just chillin"}]
+  // const sampleRH = [{original: 'Elliot', new: 'Elliottt'}]
 
   // str containing the current text that is being dictated/edited
   const [messageText, setMessageText] = useState('');
@@ -44,10 +44,6 @@ function App() {
     to pass to the TextEditor component
   */
   const correctProperNouns = async (str) => {
-    // fetch('/api/replacements?str=' + str + "&context=" + JSON.stringify(replacementHistory))
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     console.log(data);
       const response = await client.sendReplacementRequest(str, replacementHistory);
       console.log("RES", response);
       if (response == null) {
@@ -63,6 +59,10 @@ function App() {
         console.log(item);
         let guesses = item.guesses;
         const original = item.original;
+
+        if (guesses === null || guesses === undefined) {
+          guesses = [];
+        }
         
         // manually find best replacement from replacement_history
         let replacement_frequency = getReplacementFrequency(item.original, replacementHistory);
@@ -123,6 +123,14 @@ function App() {
   }
 
   /*
+   Clears the message from the text editor
+  */
+  const clearMessage = () => {
+    setMessageText('')
+    setColoring([])
+  }
+
+  /*
     When a replacement option is selected, adds to the replacement
     history and updates the text and coloring data
    */ 
@@ -141,7 +149,7 @@ function App() {
     When there is an update in the transcription, update the text in the editor
    */
   const onTranscriptUpdate = (transcript) => {
-    setMessageText(transcript); 
+    setMessageText(messageText + " " + transcript); 
   }
 
   /*
@@ -149,8 +157,10 @@ function App() {
    */
   const onTranscriptFinish = (transcript) => {
     setTranscribing(false);
-    setMessageText(transcript);
-    correctProperNouns(transcript);
+    const fullMessage = messageText + " " + transcript;
+    setMessageText(fullMessage);
+    setColoring([])
+    correctProperNouns(fullMessage);
   }
 
   return (
@@ -208,6 +218,7 @@ function App() {
               onReplacementSelect={onReplacementOptionSelect}
               transcribing={transcribing}
               onSubmitClicked={(message) => submitMessage(message)}
+              onClearClicked={clearMessage}
             />
             <Dictaphone className="dictaphone" 
               onTranscriptionStart={() => setTranscribing(true)} 
