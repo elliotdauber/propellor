@@ -133,7 +133,7 @@ function App() {
       selection = original;
     }
 
-    setColoring(coloring.filter((val) => val.words !== original));
+    setColoring(coloring.filter((val) => val.original !== original));
     setMessageText(messageText.replace(current, selection));
   }
 
