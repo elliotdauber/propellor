@@ -14,6 +14,7 @@ const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSub
     const [replacementsVisible, setReplacementsVisible] = useState(false);
     const [replacementOptions, setReplacementOptions] = useState([]);
     const [replacementsRevert, setReplacementsRevert] = useState(null);
+    const [handleEnterEvent, setHandleEnterEvent] = useState(true);
 
     useEffect(() => {
       if (transcribing) {
@@ -96,9 +97,24 @@ const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSub
       onSubmitClicked(text)
     }
 
+    /*
+      When the clear (trash) button is clicked,
+      hide the replacements and call into the parent's callback
+    */
     const handleClearClicked = () => {
       setReplacementsVisible(false);
       onClearClicked();
+    }
+
+    /*
+      When the user clicks the Enter key and this component is supposed
+      to be listening for Enter events, this should act as a "submit" action
+    */
+    const handleKeyPress = (event) => {
+      console.log("KEYPRESS")
+      if (handleEnterEvent && event.key === "Enter") {
+        handleSubmitClicked(text);
+      }
     }
 
     /*
@@ -117,7 +133,7 @@ const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSub
     }
   
     return (
-      <Stack width="80%" marginX="auto" spacing="4">
+      <Stack width="80%" marginX="auto" spacing="4" onKeyDown={(event) => handleKeyPress(event)}>
 
         {/* The replacements menu that is used to edit the text string */}
         {replacementsVisible && !transcribing && (
@@ -125,7 +141,8 @@ const TextEditor = ({ text, colorWords, transcribing, onReplacementSelect, onSub
               original={replacementsRevert}
               current={clickedWord.text}
               options={replacementOptions} 
-              onSelect={(selection) => handleReplacementSelect(selection)}/>
+              onSelect={(selection) => handleReplacementSelect(selection)}
+              onIsEditingCustomText={(isEditing) => setHandleEnterEvent(!isEditing)} />
           )}
 
         {/* The box that holds the text that is being "edited" */}

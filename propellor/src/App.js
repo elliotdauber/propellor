@@ -45,17 +45,26 @@ function App() {
   */
   const correctProperNouns = async (str) => {
       const response = await client.sendReplacementRequest(str, replacementHistory);
-      console.log("RES", response);
+      console.log("replacementRequest response:", response);
       if (response == null) {
         setFetchError(true);
         return;
       }
 
       let coloring = []
+
+      let replacements = null;
+      if (Array.isArray(response)) {
+        replacements = response;
+      } else {
+        // in case the LLM returns a single object instead of a list of them
+        replacements = [response];
+      }
       
+
       // goes through each set of possible replacements
       // in the response and builds the coloring for it
-      response.forEach((item) => {
+      replacements.forEach((item) => {
         console.log(item);
         let guesses = item.guesses;
         const original = item.original;
@@ -89,8 +98,7 @@ function App() {
           color = 'green';
           words = best_guess;
         }
-        // console.log("words", words)
-        // console.log("original", original);
+
         coloring.push({words, original, color, guesses})
       })
 

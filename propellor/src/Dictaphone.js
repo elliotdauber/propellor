@@ -73,7 +73,7 @@ const Dictaphone = ({ onTranscriptionStart, onTranscriptionEnd, onTranscriptUpda
       recognition.onaudioend = () => {
           timeoutId = setTimeout(() => {
               recognition.stop(); // Stop recognition after a period of silence
-          }, 15000);
+          }, 5000);
       };
       
       // start the listening/recognition

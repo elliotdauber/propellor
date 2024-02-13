@@ -7,7 +7,7 @@ import { Button, HStack, Input, Wrap, WrapItem, Flex } from '@chakra-ui/react';
  * Component for the replacement menu that is shown above the text input
  * when a phrase is chosen for replacement. 
  */
-const ReplacementOptions = ({ original, current, options, onSelect }) => {
+const ReplacementOptions = ({ original, current, options, onSelect, onIsEditingCustomText }) => {
     const [customText, setCustomText] = useState('')
 
     // whether or not to show the "revert" option
@@ -82,7 +82,10 @@ const ReplacementOptions = ({ original, current, options, onSelect }) => {
                             focusBorderColor="transparent" 
                             placeholder="Custom..." 
                             value={customText} 
-                            onChange={(event) => setCustomText(event.target.value)} />
+                            onFocus={() => onIsEditingCustomText(true)}
+                            onBlur={() => onIsEditingCustomText(false)}
+                            onChange={(event) => setCustomText(event.target.value)} 
+                            onKeyDown={(event) => {if (event.key === 'Enter' && customText.length > 0) onSelect(customText)}} />
                         {customText.length > 0 && 
                             <FontAwesomeIcon 
                                 icon={faAngleUp} 

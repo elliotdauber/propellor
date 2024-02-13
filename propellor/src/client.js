@@ -1,4 +1,4 @@
-const NUM_RETRIES = 5; // the number of times to retry if the server gives back an undesirable result
+const NUM_RETRIES = 10; // the number of times to retry if the server gives back an undesirable result
 
 /*
     The client that communicates with the Propellor backend
@@ -16,6 +16,7 @@ class Client {
 
         while (tries < NUM_RETRIES) {
             try {
+                console.log("making a replacement request (try #" + tries + "): ", str)
                 const response = await fetch('/api/replacements?str=' + str + "&context=" + JSON.stringify(context));
                 const data = await response.json();
                 return JSON.parse(data);
@@ -35,6 +36,7 @@ class Client {
     */
     async sendMessageRequest(message) {
         try {
+            console.log("making a replacement request: ", message)
           const response = await fetch('/api/message?message=' + message);
           return await response.json();
         } catch (error) {
