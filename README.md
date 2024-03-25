@@ -6,7 +6,7 @@ I build Propellor as a chat interface because of the potential these interfaces 
 
 # Running Propellor
 
-You can run both the frontend and backend at the same time from the root directory by running `npm start`. You will need an OpenAI API key, and you can add it to your env by running `export OPENAI_API_KEY=<your key>` before starting the app (for Daniel and Tanay, I will send you my key in an email. I don't want to post it in the repo!). You should see logs for the backend in the terminal window you ran `npm start` from, and logs for the frontend in the browser console. The frontend should be running on localhost:3000, and the backend should be running on localhost:5001.
+You can run both the frontend and backend at the same time from the root directory by running `npm start`. You will need an OpenAI API key, and you can add it to your env by running `export OPENAI_API_KEY=<your key>` before starting the app. You should see logs for the backend in the terminal window you ran `npm start` from, and logs for the frontend in the browser console. The frontend should be running on localhost:3000, and the backend should be running on localhost:5001.
 
 # Frontend
 
